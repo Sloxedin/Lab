@@ -22,10 +22,9 @@ class Event(Base):
     day = Column('day', String(50))
     month = Column('month', String(50))
     nameOfEvent = Column('nameOfEvent', String(50))
-    joined_users_id = Column('joinedUsers', Integer, ForeignKey(User.userId))
+    joined_users_id = Column('joined_users_id', Integer, ForeignKey(User.userId))
     creator_id = Column('creator', Integer)
-
-
+    joined_users = relationship(User, backref='User', lazy='joined')
 
 class Calendar(Base):
     __tablename__ = "Calendar"
@@ -33,18 +32,18 @@ class Calendar(Base):
     day = Column('day', String(50))
     month = Column('month', String(50))
     events_id = Column('events', Integer, ForeignKey(Event.eventId))
-
+    events = relationship(Event, backref='Event', lazy='joined')
 
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
-user1 = [User(firstname='Maksym', lastname='Pechonkin', email='maksym@gmail.com', phone='+380687500053', password ='root123', role='admin')]
-event1 = [Event(day='monday', month='july', nameOfEvent='deadline', joined_users_id=1, creator_id=1)]
-calendar1 = [Calendar(day='monday', month='july', events_id=1)]
-session.add_all(user1)
-session.add_all(event1)
-session.add_all(calendar1)
-session.commit()
-session.close()
+# user1 = [User(firstname='Maksym', lastname='Pechonkin', email='maksym@gmail.com', phone='+380687500053', password ='root123', role='admin')]
+# event1 = [Event(day='monday', month='july', nameOfEvent='deadline', joined_users_id=1, creator_id=1)]
+# calendar1 = [Calendar(day='monday', month='july', events_id=1)]
+# session.add_all(user1)
+# session.add_all(event1)
+# session.add_all(calendar1)
+# session.commit()
+# session.close()
