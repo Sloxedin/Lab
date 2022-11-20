@@ -1,0 +1,560 @@
+openapi: 3.0.3
+info:
+  title: Календар подій
+  version: 1.0.11
+servers:
+  - url: https://localhost:8080/api/v1
+    description: Календар
+
+
+paths:
+  /event:
+    post:
+      tags:
+        - event
+      summary: Створити подію
+      description: Створити подію 
+      operationId: addEvent
+      requestBody:
+        description: Створити нову подію у календарі
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Введено неправильно подію
+        '404':
+          description: Подію не знайдено
+      security:
+        - api_key: [
+          -User]
+      
+    put:
+      tags:
+        - event
+      summary: Оновити подію
+      description: Оновити подію
+      operationId: updateEvent
+      requestBody:
+        description: Оновити подію в календарі
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Введено неправильно подію
+        '404':
+          description: Подію не знайдено
+        '405':
+          description: Вийняток перевірки
+      security:
+        - api_key: [
+          -User]
+    
+  /event/addUser/{userId}:
+    post:
+      tags:
+        - event
+      summary: Долучити учасника до календаря
+      description: Долучити учасника до календаря
+      operationId: addUserToEvent
+      requestBody:
+        description: Долучити учасника до календаря
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      parameters:
+        - name: userId
+          in: path
+          description: введіть ID користувача
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Введено неправильно користувача
+        '404':
+          description: Користувача не знайдено
+      security:
+        - api_key: [
+          -User]
+      
+    
+  /event/{eventId}:
+    get:
+      tags:
+        - event
+      summary: Знайти подію за ID
+      description: Повертає подію
+      operationId: getEventById
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Введено неправильне ID події
+        '404':
+          description: Подію не знайдено
+        '405':
+          description: Вийняток перевірки
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+    
+    delete:
+      tags:
+        - event
+      summary: Видаляє подію
+      description: Видаляє подію
+      operationId: deleteEvent
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: eventId
+          in: path
+          description: Введіть ID події щоб видалити
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Неправильне значення ID   
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+  
+  /calendar:
+    post:
+      tags:
+        - calendar
+      summary: Створити календар
+      description: Створити календар
+      operationId: addCalendar
+      requestBody:
+        description: Створити новий календар
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Calendar'
+        required: true
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'
+        '400':
+          description: Введено неправильно календар
+        '404':
+          description: Календар не знайдено
+      security:
+        - api_key: [
+          -User]
+    
+  /calendar/{allCalendars}:
+    get:
+      tags:
+        - calendar
+      summary: Отримати всі події, навіть до яких не долучений за ID
+      description: Повертає календар зі всіма подіями
+      operationId: getCalendarById
+      parameters:
+        - name: allCalendars
+          in: path
+          description: ID of calendar to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'
+        '400':
+          description: Введено неправильне ID календаря
+        '404':
+          description: календар не знайдено
+        '405':
+          description: Вийняток перевірки
+      security:
+        - api_key: []
+    
+  /calendar/myEvents/{myCalendar}:
+    get:
+      tags:
+        - calendar
+      summary: Отримати всі події, до яких залучений за ID
+      description: Повертає календар зі всіма подіями
+      operationId: getMyEvents
+      parameters:
+        - name: myCalendar
+          in: path
+          description: ID of calendar to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'
+        '400':
+          description: Введено неправильне ID календаря
+        '404':
+          description: календар не знайдено
+        '405':
+          description: Вийняток перевірки
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+    
+    delete:
+      tags:
+        - calendar
+      summary: Видалити календар користувача
+      description: Видалити календар користувача
+      operationId: deleteCalendar
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: myCalendar
+          in: path
+          description: Введіть ID календаря щоб видалити
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Неправильне значення ID   
+      security:
+        - api_key: [
+          -User]
+  
+  /user:
+    post:
+      tags:
+        - user
+      summary: Створити користувача
+      description: Створити користувача
+      operationId: createUser
+      requestBody:
+        description: Створює об'єкт користувача
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Успішно оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Неправильно введено ім'я
+        '404':
+          description: Користувача не знайдено 
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Вхід у систему
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: Ім'я користувача для входу
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: Пароль для входу
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успішно виконано
+          headers:
+            X-Rate-Limit:
+              description: Використано забагато спроб для входу
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Неправильно введено ім'я користувача/пароль
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Вихід користувача 
+      description: ''
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: Успішно виконано
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Знати користувача за ім'ям
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'Імя отримано. Використайте uer1 Для перевірки. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успішно виконано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+        '400':
+          description: Неправильне ім'я користувача
+        '404':
+          description: Користувач не знайдений
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+    put:
+      tags:
+        - user
+      summary: Оновити дані про користувача
+      description: Це може виконувати користувач який залогінився
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: введіть ім'я яке хочетет оновити
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Оновити ім'я
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: Успішно виконано
+      security:
+        - api_key: [
+          -User,
+          -Admin]
+    delete:
+      tags:
+        - user
+      summary: Видалити користувача
+      description: видалення користувача може бути виконано коли користувач увійшов в аакаунт
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: SDA
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: неправильне ім'я
+        '404':
+          description: Користувач не знайдений
+      security:
+      - api_key: [
+        -User]
+
+components:
+  schemas:
+    User:
+      type: object
+      required: 
+        - firstName
+        - lastName
+        - email
+        - phone
+        - password
+        - role
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 1
+        firstName:
+          type: string
+          example: Maksym
+        lastName:
+          type: string
+          example: Pechonkin
+        email:
+          type: string
+          example: maksymPechonkin@gmail.com
+        phone:
+          type: string
+          example: +380687500053
+        password:
+          type: string
+          example: pass123
+        role:
+          type: string
+          enum:
+            - User 
+            - Admin
+      description: Інформація про користувача
+      
+    Event:
+      type: object
+      required: 
+        - day
+        - mounth
+        - nameOfEvent
+        - creator
+      properties:
+        eventId:
+          type: integer
+          format: int64
+          example: 1
+        day:
+          type: string
+          enum:
+            - sunday
+            - monday
+            - tuesday
+            - wednesday
+            - thursday
+            - friday
+            - saturday
+          example: monday
+        mounth:
+          type: integer
+          enum:
+            - 1
+            - 2 
+            - 3
+            - 4
+            - 5
+            - 6 
+            - 7 
+            - 8 
+            - 9
+            - 10
+            - 11
+            - 12
+          example: 10
+        nameOfEvent:
+          type: string
+          example: deadline 
+        joinedUsers:
+          type: array
+          items: 
+            $ref: "#/components/schemas/User"
+        creator: 
+          $ref: "#/components/schemas/User"
+      description: Подія 
+      
+    Calendar:
+      type: object
+      properties:
+        calendarId:
+          type: integer
+          format: int64
+          example: 54
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+    
+  securitySchemes:
+    calendarSecurity:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://localhost:8080/api/v1
+          scopes:
+            write:events: modify calendars in your account
+            read:events: watch your calendars
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
